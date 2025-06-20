@@ -1,0 +1,17 @@
+- name: Instalar Nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: true
+
+- name: Configurar balanceador
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/sites-available/default
+  notify: Restart Nginx
+
+- name: Asegurar que Nginx está corriendo
+  service:
+    name: nginx
+    state: started
+    enabled: true

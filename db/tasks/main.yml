@@ -1,0 +1,37 @@
+- name: Crear usuario admin Ansible
+  mysql_user:
+    name: ansible_admin
+    password: "{{ mariadb_root_password }}"
+    priv: "*.*:ALL,GRANT"
+    host: "%"
+    state: present
+    login_unix_socket: /run/mysqld/mysqld.sock
+
+- name: Instalar PyMySQL para conexión a MariaDB
+  apt:
+    name: python3-pymysql
+    state: present
+    update_cache: true
+
+- name: Instalar MariaDB
+  apt:
+    name: mariadb-server
+    state: present
+    update_cache: true
+
+- name: Crear base de datos
+  mysql_db:
+    name: "{{ mariadb_db }}"
+    state: present
+    login_user: ansible_admin
+    login_password: "{{ mariadb_root_password }}"
+
+- name: Crear usuario de Wordpress
+  mysql_user:
+    name: "{{ mariadb_user }}"
+    password: "{{ mariadb_password }}"
+    priv: "{{ mariadb_db }}.*:ALL"
+    host: "%"
+    state: present
+    login_user: ansible_admin
+    login_password: "{{ mariadb_root_password }}"

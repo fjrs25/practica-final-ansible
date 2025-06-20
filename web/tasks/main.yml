@@ -1,0 +1,34 @@
+- name: Instalar Apache, PHP y dependencias
+  apt:
+    name:
+      - apache2
+      - php
+      - php-mysql
+      - libapache2-mod-php
+      - unzip
+    state: present
+    update_cache: true
+
+- name: Descargar WordPress
+  get_url:
+    url: https://wordpress.org/latest.zip
+    dest: /tmp/wordpress.zip
+
+- name: Extraer WordPress
+  unarchive:
+    src: /tmp/wordpress.zip
+    dest: /var/www/html/
+    remote_src: yes
+
+- name: Configurar wp-config.php
+  template:
+    src: wp-config.php.j2
+    dest: /var/www/html/wordpress/wp-config.php
+    owner: www-data
+    group: www-data
+    mode: 0644
+
+- name: Reiniciar Apache
+  service:
+    name: apache2
+    state: restarted

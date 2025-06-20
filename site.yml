@@ -1,0 +1,22 @@
+---
+- name: Configurar base de datos para WordPress
+  hosts: database
+  become: true
+  vars_files:
+    - group_vars/vault.yml
+  roles:
+    - db
+
+- name: Configurar servidor web con WordPress
+  hosts: webserver
+  become: true
+  vars_files:
+    - group_vars/vault.yml
+  roles:
+    - web
+
+- name: Configurar balanceador de carga
+  hosts: loadbalancer
+  become: true
+  roles:
+    - loadbalancer
